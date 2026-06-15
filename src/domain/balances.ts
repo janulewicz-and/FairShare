@@ -1,16 +1,7 @@
-import { splitExpense, type SplitMethod, type ParticipantId } from './splitting'
+import type { ParticipantId, Expense, Participant } from './types'
+import { splitExpense } from './splitting'
 
-export interface Expense {
-  readonly id: string
-  readonly payerId: ParticipantId
-  readonly amountMinorUnits: number
-  readonly splitMethod: SplitMethod
-}
-
-export interface Participant {
-  readonly id: ParticipantId
-  readonly displayName: string
-}
+export type { Expense, Participant }
 
 export const calculateParticipantBalances = (
   expenses: Expense[],

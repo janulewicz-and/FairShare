@@ -1,29 +1,6 @@
-export type CurrencyCode =
-  | 'USD'
-  | 'EUR'
-  | 'GBP'
-  | 'JPY'
-  | 'CNY'
-  | 'AUD'
-  | 'CAD'
-  | 'CHF'
-  | 'HKD'
-  | 'SGD'
-  | 'SEK'
-  | 'NOK'
-  | 'NZD'
-  | 'MXN'
-  | 'BRL'
-  | 'INR'
-  | 'RUB'
-  | 'ZAR'
-  | 'TRY'
-  | 'PLN'
+import type { CurrencyCode, Money } from './types'
 
-export interface Money {
-  readonly amount: number
-  readonly currency: CurrencyCode
-}
+export type { CurrencyCode, Money }
 
 export const createMoney = (amount: number, currency: CurrencyCode): Money => {
   if (!Number.isInteger(amount)) {

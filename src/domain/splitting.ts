@@ -1,8 +1,6 @@
-export type ParticipantId = string
+import type { ParticipantId, SplitMethod } from './types'
 
-export type SplitMethod =
-  | { kind: 'equal'; participantIds: ParticipantId[] }
-  | { kind: 'exactAmounts'; amountByParticipantId: Map<ParticipantId, number> }
+export type { ParticipantId, SplitMethod }
 
 const splitEqually = (
   totalMinorUnits: number,
