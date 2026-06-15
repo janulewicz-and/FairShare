@@ -45,6 +45,23 @@ describe('splitExpense() — equal split', () => {
     expect(shares.get('bob')).toBe(0)
     expect(sumShares(shares)).toBe(0)
   })
+
+  it('throws when participantIds is empty', () => {
+    expect(() =>
+      splitExpense(1000, { kind: 'equal', participantIds: [] }),
+    ).toThrow()
+  })
+
+  it('splits a negative amount (refund) correctly so shares sum to the total', () => {
+    const shares = splitExpense(-10, {
+      kind: 'equal',
+      participantIds: ['alice', 'bob', 'carol'],
+    })
+    expect(sumShares(shares)).toBe(-10)
+    expect(shares.get('alice')).toBe(-4)
+    expect(shares.get('bob')).toBe(-3)
+    expect(shares.get('carol')).toBe(-3)
+  })
 })
 
 describe('splitExpense() — exactAmounts split', () => {
@@ -68,6 +85,18 @@ describe('splitExpense() — exactAmounts split', () => {
         amountByParticipantId: new Map([
           ['alice', 60],
           ['bob', 30],
+        ]),
+      }),
+    ).toThrow()
+  })
+
+  it('throws when any share is a non-integer', () => {
+    expect(() =>
+      splitExpense(100, {
+        kind: 'exactAmounts',
+        amountByParticipantId: new Map([
+          ['alice', 60.5],
+          ['bob', 39.5],
         ]),
       }),
     ).toThrow()
