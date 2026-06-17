@@ -36,6 +36,7 @@ export interface Expense {
   readonly payerId: ParticipantId
   readonly amountMinorUnits: number
   readonly splitMethod: SplitMethod
+  readonly exchangeRateToBase: number
 }
 
 export interface Participant {

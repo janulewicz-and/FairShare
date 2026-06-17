@@ -14,6 +14,7 @@ describe('calculateParticipantBalances()', () => {
         id: 'expense-1',
         payerId: 'alice',
         amountMinorUnits: 900,
+        exchangeRateToBase: 1.0,
         splitMethod: {
           kind: 'equal',
           participantIds: ['alice', 'bob', 'carol'],
@@ -34,6 +35,7 @@ describe('calculateParticipantBalances()', () => {
         id: 'expense-1',
         payerId: 'alice',
         amountMinorUnits: 600,
+        exchangeRateToBase: 1.0,
         splitMethod: {
           kind: 'equal',
           participantIds: ['alice', 'bob'],
@@ -43,6 +45,7 @@ describe('calculateParticipantBalances()', () => {
         id: 'expense-2',
         payerId: 'bob',
         amountMinorUnits: 400,
+        exchangeRateToBase: 1.0,
         splitMethod: {
           kind: 'equal',
           participantIds: ['alice', 'bob'],
@@ -62,6 +65,7 @@ describe('calculateParticipantBalances()', () => {
         id: 'expense-1',
         payerId: 'alice',
         amountMinorUnits: 300,
+        exchangeRateToBase: 1.0,
         splitMethod: {
           kind: 'equal',
           participantIds: ['alice', 'bob', 'carol'],
@@ -81,6 +85,7 @@ describe('calculateParticipantBalances()', () => {
         id: 'expense-1',
         payerId: 'alice',
         amountMinorUnits: 750,
+        exchangeRateToBase: 1.0,
         splitMethod: {
           kind: 'equal',
           participantIds: ['alice', 'bob', 'carol'],
@@ -90,6 +95,7 @@ describe('calculateParticipantBalances()', () => {
         id: 'expense-2',
         payerId: 'bob',
         amountMinorUnits: 1200,
+        exchangeRateToBase: 1.0,
         splitMethod: {
           kind: 'exactAmounts',
           amountByParticipantId: new Map([
@@ -112,6 +118,7 @@ describe('calculateParticipantBalances()', () => {
         id: 'expense-1',
         payerId: 'alice',
         amountMinorUnits: 100,
+        exchangeRateToBase: 1.0,
         splitMethod: {
           kind: 'equal',
           participantIds: ['alice', 'bob', 'carol'],
@@ -122,5 +129,58 @@ describe('calculateParticipantBalances()', () => {
     const balances = calculateParticipantBalances(expenses)
 
     expect(sumAllBalances(balances)).toBe(0)
+  })
+
+  it('converts each expense through its own fixed rate when a group has two currencies', () => {
+    const expenses: Expense[] = [
+      {
+        id: 'expense-1',
+        payerId: 'alice',
+        amountMinorUnits: 1000,
+        exchangeRateToBase: 1.1,
+        splitMethod: {
+          kind: 'equal',
+          participantIds: ['alice', 'bob'],
+        },
+      },
+      {
+        id: 'expense-2',
+        payerId: 'bob',
+        amountMinorUnits: 600,
+        exchangeRateToBase: 1.25,
+        splitMethod: {
+          kind: 'equal',
+          participantIds: ['alice', 'bob'],
+        },
+      },
+    ]
+
+    const balances = calculateParticipantBalances(expenses)
+
+    expect(balances.get('alice')).toBe(175)
+    expect(balances.get('bob')).toBe(-175)
+    expect(sumAllBalances(balances)).toBe(0)
+  })
+
+  it('asserts the exact residual left by independently-rounded per-expense conversions', () => {
+    const expenses: Expense[] = [
+      {
+        id: 'expense-1',
+        payerId: 'alice',
+        amountMinorUnits: 100,
+        exchangeRateToBase: 0.335,
+        splitMethod: {
+          kind: 'equal',
+          participantIds: ['alice', 'bob', 'carol'],
+        },
+      },
+    ]
+
+    const balances = calculateParticipantBalances(expenses)
+
+    expect(balances.get('alice')).toBe(23)
+    expect(balances.get('bob')).toBe(-11)
+    expect(balances.get('carol')).toBe(-11)
+    expect(sumAllBalances(balances)).toBe(1)
   })
 })
