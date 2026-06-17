@@ -42,3 +42,9 @@ export interface Participant {
   readonly id: ParticipantId
   readonly displayName: string
 }
+
+export interface SettlementTransfer {
+  readonly fromParticipantId: ParticipantId
+  readonly toParticipantId: ParticipantId
+  readonly amountMinorUnits: number
+}
